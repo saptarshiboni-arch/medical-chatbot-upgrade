@@ -1,0 +1,95 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Chat History</title>
+
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: linear-gradient(to right, #4facfe, #00f2fe);
+        margin: 0;
+        padding: 20px;
+      }
+
+      h1 {
+        text-align: center;
+        margin-bottom: 20px;
+        color: white;
+      }
+
+      .top-buttons {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 20px;
+        max-width: 800px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      button {
+        padding: 8px 15px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: bold;
+      }
+
+      .clear-btn {
+        background-color: #ff4d4d;
+        color: white;
+      }
+
+      .back-btn {
+        background-color: #ffffff;
+        color: #333;
+      }
+
+      .chat-container {
+        max-width: 800px;
+        margin: auto;
+      }
+
+      .chat-box {
+        background: white;
+        padding: 15px;
+        margin-bottom: 15px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      }
+
+      .user {
+        color: #333;
+        margin-bottom: 8px;
+      }
+
+      .bot {
+        color: #555;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>Chat History</h1>
+
+    <div class="top-buttons">
+      <button class="back-btn" onclick="window.location.href = '/'">
+        ← Back to Chat
+      </button>
+
+      <button
+        class="clear-btn"
+        onclick="window.location.href = '/clear_history'">
+        Clear History
+      </button>
+    </div>
+
+    <div class="chat-container">
+      {% for chat in chats %}
+      <div class="chat-box">
+        <div class="user"><b>You:</b> {{ chat.user }}</div>
+        <div class="bot"><b>Bot:</b> {{ chat.bot }}</div>
+      </div>
+      {% endfor %}
+    </div>
+  </body>
+</html>
