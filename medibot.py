@@ -25,9 +25,6 @@ def get_vectorstore():
     return db
 
 
-print("Loading vectorstore from disk...")
-vectorstore = get_vectorstore()
-print("Vectorstore loaded successfully.")
 
 
 def get_response(user_query):
@@ -65,9 +62,12 @@ Question:
             custom_prompt
         )
 
+
+        vectorstore = get_vectorstore()
+
         rag_chain = create_retrieval_chain(
-            vectorstore.as_retriever(search_kwargs={'k': 3}),
-            combine_docs_chain
+           vectorstore.as_retriever(search_kwargs={'k': 3}),
+           combine_docs_chain
         )
 
         response = rag_chain.invoke({'input': user_query})
