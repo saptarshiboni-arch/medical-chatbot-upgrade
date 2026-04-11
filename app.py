@@ -4,6 +4,8 @@ from medibot import get_response
 import traceback
 import os
 
+print("App file started")
+
 app = Flask(__name__)
 CORS(app, resources={r"/chat": {"origins": "*"}})
 
@@ -13,7 +15,7 @@ chat_history = []
 
 @app.route("/")
 def home():
-    return render_template("index.html")
+    return "backend is running!"
 
 
 @app.route("/chat", methods=["POST"])
@@ -61,4 +63,5 @@ def clear_history():
 
 # Run app (IMPORTANT FOR RENDER)
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
+    print ("starting flask app...")
+    app.run(host="0.0.0.0", port=10000)
