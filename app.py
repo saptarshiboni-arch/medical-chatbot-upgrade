@@ -7,62 +7,65 @@ import os
 print("App file started")
 
 app = Flask(__name__)
-CORS(app, resources={r"/chat": {"origins": "*"}})
+# Updated CORS to be more flexible for the live environment
+CORS(app)
 
 # Store chat history
 chat_history = []
-
 
 @app.route("/")
 def home():
     return render_template("index.html")
 
-
 @app.route("/chat", methods=["POST"])
 def chat():
-    import traceback
     try:
+        # force=True ensures it tries to parse JSON even if content-type header is missing
         data = request.get_json(force=True)
-        print("Incoming:", data)
+        print("Incoming Data:", data)
 
         user_msg = data.get("message", "")
+        
+        if not user_msg:
+            return jsonify({"response": "I didn't receive a message. Please try again."})
 
+        # Calling your medibot logic
         reply = get_response(user_msg)
+        print("RAW REPLY FROM MEDIBOT:", reply)
 
-        print("RAW REPLY:", reply)
-
-        # ✅ FORCE SAFE RESPONSE
         if not reply:
-            reply = "EMPTY RESPONSE FROM BACKEND"
+            reply = "The assistant is currently unavailable. Please try again later."
+
+        # Add to history (optional logic improvement)
+        chat_history.append({"user": user_msg, "bot": reply})
 
         return jsonify({
             "response": str(reply)
         })
 
     except Exception as e:
-        error = traceback.format_exc()
-        print("ERROR:", error)
+        error_details = traceback.format_exc()
+        print("CRITICAL ERROR IN /CHAT ROUTE:")
+        print(error_details)
 
         return jsonify({
-            "response": "BACKEND ERROR",
-            "error": error
+            "response": "Sorry, the server encountered an error.",
+            "debug_info": str(e) # This helps you see the error in the UI
         })
 
-# History page
 @app.route("/history")
 def history():
     return render_template("history.html", chats=chat_history)
 
-
-# Clear history
 @app.route("/clear_history")
 def clear_history():
     global chat_history
     chat_history = []
     return "History cleared! <a href='/history'>Go back</a>"
 
-
-# Run app (IMPORTANT FOR RENDER)
+# --- UPDATED FOR RENDER ---
 if __name__ == "__main__":
-    print ("starting flask app...")
-    app.run(host="0.0.0.0", port=10000)
+    # Render uses the $PORT environment variable. If it doesn't exist, we use 10000.
+    port = int(os.environ.get("PORT", 10000))
+    print(f"Starting Flask app on port {port}...")
+    app.run(host="0.0.0.0", port=port)
