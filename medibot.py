@@ -1,30 +1,34 @@
 import os
 
-
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
 from langchain_core.prompts import PromptTemplate
 from langchain_groq import ChatGroq
-from langchain import hub
 from langchain.chains import create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
 
-
-## Uncomment the following files if you're not using pipenv as your virtual environment manager
 from dotenv import load_dotenv
 load_dotenv()
 
+DB_FAISS_PATH = "vectorstore/db_faiss"
 
-DB_FAISS_PATH="vectorstore/db_faiss"
 
 def get_vectorstore():
-    embedding_model=HuggingFaceEmbeddings(model_name='sentence-transformers/all-MiniLM-L6-v2')
-    db=FAISS.load_local(DB_FAISS_PATH, embedding_model, allow_dangerous_deserialization=True)
+    embedding_model = HuggingFaceEmbeddings(
+        model_name='sentence-transformers/all-MiniLM-L6-v2'
+    )
+    db = FAISS.load_local(
+        DB_FAISS_PATH,
+        embedding_model,
+        allow_dangerous_deserialization=True
+    )
     return db
+
 
 print("Loading vectorstore from disk...")
 vectorstore = get_vectorstore()
 print("Vectorstore loaded successfully.")
+
 
 def get_response(user_query):
     try:
@@ -37,11 +41,28 @@ def get_response(user_query):
             api_key=GROQ_API_KEY,
         )
 
-        retrieval_qa_chat_prompt = hub.pull("langchain-ai/retrieval-qa-chat")
+        # ✅ CUSTOM PROMPT (FIXED POSITION)
+        CUSTOM_PROMPT_TEMPLATE = """
+You are a professional medical assistant.
 
+Use ONLY the provided context to answer the question.
+
+Context:
+{context}
+
+Question:
+{question}
+"""
+
+        custom_prompt = PromptTemplate(
+            template=CUSTOM_PROMPT_TEMPLATE,
+            input_variables=["context", "question"]
+        )
+
+        # ✅ Chains
         combine_docs_chain = create_stuff_documents_chain(
             llm,
-            retrieval_qa_chat_prompt
+            custom_prompt
         )
 
         rag_chain = create_retrieval_chain(
@@ -55,9 +76,3 @@ def get_response(user_query):
 
     except Exception as e:
         return str(e)
-
-
-
-
-
-
