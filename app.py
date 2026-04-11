@@ -15,7 +15,7 @@ chat_history = []
 
 @app.route("/")
 def home():
-    return "backend is running!"
+    return render_template("index.html")
 
 
 @app.route("/chat", methods=["POST"])
