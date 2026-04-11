@@ -65,7 +65,8 @@ def clear_history():
 
 # --- UPDATED FOR RENDER ---
 if __name__ == "__main__":
-    # Render uses the $PORT environment variable. If it doesn't exist, we use 10000.
+    # This line is the most important! 
+    # It tells Flask to listen to Render's dynamic port.
     port = int(os.environ.get("PORT", 10000))
-    print(f"Starting Flask app on port {port}...")
+    print(f"Server is starting on port {port}")
     app.run(host="0.0.0.0", port=port)
