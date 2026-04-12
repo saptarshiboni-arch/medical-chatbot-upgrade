@@ -88,6 +88,17 @@ def history():
 
     return render_template("history.html", chats=data)
 
+@app.route("/clear_history")
+def clear_history():
+    import os
+
+    try:
+        if os.path.exists(HISTORY_FILE):
+            os.remove(HISTORY_FILE)
+        return "History cleared successfully"
+    except Exception as e:
+        return str(e)
+
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
