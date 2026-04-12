@@ -182,20 +182,24 @@
       // 🔹 Typing effect function
       function typeText(element, text, speed = 20) {
         let i = 0;
-        element.innerHTML = "";
+        element.textContent = ""; // ✅ use textContent (safe)
 
         function typing() {
           if (i < text.length) {
             let char = text.charAt(i);
 
-            // ✅ Handle line breaks properly
             if (char === "\n") {
-              element.innerHTML += "<br>";
+              element.textContent += "\n";
             } else {
-              element.innerHTML += char;
+              element.textContent += char;
             }
 
             i++;
+
+            // auto scroll
+            let chatBox = document.getElementById("chat-box");
+            chatBox.scrollTop = chatBox.scrollHeight;
+
             setTimeout(typing, speed);
           }
         }
