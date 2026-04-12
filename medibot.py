@@ -15,12 +15,12 @@ DB_FAISS_PATH = "vectorstore/db_faiss"
 # ✅ GLOBAL CACHE
 vectorstore = None
 
-
+"""
 def get_vectorstore():
     global vectorstore
 
-    # ✅ Already loaded
-    if vectorstore is not None:
+  # ✅ Already loaded
+  if vectorstore is not None:
         return vectorstore
 
     print("Loading vectorstore once...")
@@ -41,7 +41,11 @@ def get_vectorstore():
 
     print("Vectorstore loaded ✅")
     return vectorstore
+"""
 
+def get_vectorstore():
+    print("Vectorstore disabled")
+    return None
 
 def get_response(user_query):
     try:
@@ -85,7 +89,9 @@ Question:
             combine_docs_chain
         )
 
-        response = rag_chain.invoke({'input': user_query})
+       # response = rag_chain.invoke({'input': user_query})
+        response = llm.invoke(user_query)
+        return response.content
 
         if isinstance(response, dict):
             return response.get("answer", "No answer")
