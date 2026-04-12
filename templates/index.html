@@ -75,6 +75,10 @@
         flex-direction: column;
       }
 
+      .chat-box {
+        scroll-behavior: smooth;
+      }
+
       /* Messages */
       .message {
         margin-bottom: 14px;
@@ -100,6 +104,7 @@
         align-self: flex-start;
         border: 1px solid #e0e0e0;
         border-bottom-left-radius: 4px;
+        white-space: pre-wrap;
       }
 
       /* Input area */
@@ -177,11 +182,19 @@
       // 🔹 Typing effect function
       function typeText(element, text, speed = 20) {
         let i = 0;
-        element.innerText = "";
+        element.innerHTML = "";
 
         function typing() {
           if (i < text.length) {
-            element.innerText += text.charAt(i);
+            let char = text.charAt(i);
+
+            // ✅ Handle line breaks properly
+            if (char === "\n") {
+              element.innerHTML += "<br>";
+            } else {
+              element.innerHTML += char;
+            }
+
             i++;
             setTimeout(typing, speed);
           }
@@ -189,7 +202,6 @@
 
         typing();
       }
-
       async function sendMessage() {
         let input = document.getElementById("user-input");
         let message = input.value.trim();
